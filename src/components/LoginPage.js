@@ -1,14 +1,18 @@
 import React, { useState, useReducer } from "react";
 
+// Define the actions strings as variable to keep actions consistent
 const ACTIONS = {
     UPDATE: "UPDATE",
 };
 
+// useReducer's initial state
 const initialState = {
     userid: "",
     password: "",
 };
 
+// reducer function takes in the initial / previous state & an action
+// it returns the new state based on case
 function reducer(credentials, action) {
     switch (action.type) {
         case ACTIONS.UPDATE:
@@ -23,11 +27,13 @@ function reducer(credentials, action) {
     }
 }
 
+// initial state for useState for controlled input field
 const initialCred = {
     userid: "",
     password: "",
 };
 
+// initial state for useState for setting error messages
 const initialErr = {
     idErr: null,
     pwErr: null,
@@ -38,12 +44,17 @@ const LoginPage = () => {
     const [cred, setCred] = useState(initialCred);
     const [error, setError] = useState(initialErr);
 
+    // onChange handler function for input field
     function handleChange(e) {
         const { name, value } = e.target;
         // setCred({ ...cred, [e.target.name]: e.target.value });
         setCred((prevCred) => ({ ...prevCred, [name]: value }));
     }
 
+    // on form submit, this function will run and check whether the credentials inputted
+    // passes the requirement or not
+    // if input does not pass, it will set the error state with the corresponding messages
+    // return value will be boolean
     function validateCred(cred) {
         if (!cred.userid || !cred.password) {
             if (!cred.userid && !cred.password) {
@@ -101,6 +112,8 @@ const LoginPage = () => {
             return true;
         }
     }
+
+    // functions to reset error and credential state
     function clearErr() {
         setError({ ...initialErr });
     }
@@ -109,19 +122,27 @@ const LoginPage = () => {
         setCred({ ...initialCred });
     }
 
+    // form submit handler function, on submit it will clear the error state then validate the
+    // credentials last entered. If credential passes, validateCred will return "true"
+    // then dispatch function from useReducer hook will fire off a new action
+    // action is an object containing type (case) and payload which will be passed to
+    // the reducer function
     function handleSubmit(event) {
         event.preventDefault();
         clearErr();
         if (validateCred(cred)) {
             dispatch({ type: ACTIONS.UPDATE, payload: { cred: cred } });
             setTimeout(() => {
-                alert("useReducer works! You've Logged In!");
+                alert(
+                    "useReducer works, check console log to see useReducer's state! You've Logged In!"
+                );
                 clearErr();
                 clearCred();
             }, 100);
         }
     }
 
+    // log the useReducer's state
     console.log(credentials);
 
     return (
